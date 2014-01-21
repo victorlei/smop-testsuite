@@ -1,0 +1,9 @@
+temp4={'LOWER','UPPER','OFFSET','ABSOLUTE','RELATIVETO','LAMDA','PENALTY','QPPENALTY','TIMESERIES','RELATIVE','OFFSETFACTOR','PENALIZE_BELOW_ONLY','PENALIZE_ABOVE_ONLY','SCALE_PENALTY_TO_UNIVERSE','SCALE_TARGET_TO_BENCHMARK','BUT_NO_LESS_THAN','BUT_NO_MORE_THAN','RELATIVE_TO_PREOPTIMIZE'};
+
+for i=1:length(temp4)
+ temp5=find(strcmpi(temp4{i},changeCase));
+ if ~isempty(temp5)
+  temp5=temp5(1);
+  changeCase{temp5}=temp4{i};
+ end
+end

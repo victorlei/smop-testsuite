@@ -1,0 +1,185 @@
+Hints and Tips (09/27/04)
+
+Help with different compilers and mexopts.sh --
+
+The author has personally tested matlab2fmex operation on a PC with Intel's Fortran90
+compiler and with g95. This system, its corresponding mexopts.sh files, and the process involved in
+getting everything to work is described here. I do not claim to be an expert at compiling,
+linking, etc., but I do have some experience with the following configurations. If anyone
+has suggestions (even seemingly obvious ones), please e-mail me at
+barrowes@users.sourceforge.net If anyone has other working and tested configurations (both
+TESTING.m and TESTING_uoi.m work), please mail them to me so I can add them here.
+
+1.) Linux (RedHat) with Intel Fortran90
+
+    This compiler is free for non-commercial or research purposes and is therefore very
+attractive to many in the scientific community who are performing research. Get it at:
+http://www.intel.com/software/products/global/eval.htm You may also want to grab the mkl
+math libraries from Intel as well.
+
+     After downloading and installing the Intel compiler, you will need to
+change your mexopts.sh file at ~/.matlab/R14/mexopts.sh. Generate the generic one with 
+>>mex -setup
+and pick the f90 option. Then alter the linux (glnx86) section to include the following:
+#####For the Intel compiler##############
+            FC='ifort'
+            FFLAGS='-fPIC -r8'
+            intelLibs='-L/opt/intel_fc_80/lib'
+            FLIBS="$RPATH $MLIBS $intelLibs -lm -lslatec -llapack"
+            FOPTIMFLAGS='-O3'
+            FDEBUGFLAGS='-g'
+            LD="g77"
+            LDFLAGS="-pthread -shared -Wl,--version-script,$TMW_ROOT/extern/lib/$Arch/$MAPFILE"
+            LDOPTIMFLAGS=$FOPTIMFLAGS
+            LDDEBUGFLAGS='-g'
+            POSTLINK_CMDS=':'
+###################################
+instead of the g77 section.
+
+1.a.) Install slatec library The next thing which needs to be done is to recompile slatec
+for your system __using ifort__. This can be done by following the directions found at:
+http://www.physics.orst.edu/~bertrand/slatec/makingslatec.html
+I found that including the extra files listed near the bottom of the page in the same
+library was most convenient.
+
+Before compiling, I found that I also needed to change the machine dependent files
+i1mach.f, d1mach.f, and r1mach.f found in the src directory for slatec. There are sections
+in these files relating to different machine types. Uncomment the sections relating to
+intel machines then compile as explained above.
+
+1.b.) lapack settings
+Build lapack after downloading from netlib and following the directions found at:
+http://www.netlib.org/lapack/lawn41/index.html
+using ifort.
+
+Now run the test programs and hopefully things will work.
+
+
+2.) Linux (RedHat) with g95 Fortran90 Compiler 
+Build lapack and slatec with g95 and install.
+Then:
+            FC='g95'
+            FFLAGS='-fPIC -r8'
+            FLIBS="$RPATH $MLIBS"
+            FOPTIMFLAGS='-O3'
+            FDEBUGFLAGS='-g'
+            LD="g95"
+            LDEXTENSION='.mexglx'
+            LDFLAGS="-pthread -shared -Wl,--version-script,$TMW_ROOT/extern/lib/$Arch/$MAPFILE"
+            LDOPTIMFLAGS=$FOPTIMFLAGS
+            LDDEBUGFLAGS='-g'
+            POSTLINK_CMDS=':'
+
+
+I would appreciate the mexopts.sh and installation hints from any
+other successful implementation of matlab2fmex. Please mail them to
+the email address above.
+
+
+3.) The following was reported to work on Mac OS X 10.3 with NagWare f95:
+# NAGWare Fortran 95 compiler Release 5.0(367)
+FC='/usr/local/bin/f95'
+FFLAGS='-ieee=full -kind=byte -free -r8 -Wc,-fPIC -mismatch_all -dcfuns -w=all'
+FLIBS='/usr/local/lib/NAGWare/quickfit.o /usr/local/lib/NAGWare/libf96.a'
+FOPTIMFLAGS='-O'
+FDEBUGFLAGS='-gline'
+
+LD='gcc-3.3'
+LDEXTENSION='.mexmac'
+LDFLAGS="-bundle -Wl,-flat_namespace -undefined suppress -Wl,-exported_symbols_list,$TMW_ROOT/extern/lib/$Arch/$MAPFILE"
+LDOPTIMFLAGS='-O'
+LDDEBUGFLAGS='-g' 
+
+
+
+HINTS:
+Put brackets around all colon list expressions.
+
+Watch your sqrt's, fortran can't handle sqrt(-#). 
+Set want_cs=1 if you think you may encounter imaginary roots.
+
+Also be careful with powers of negative numbers as fortran can't
+figure out the resulting type of the answer beforehand. Rather use a
+small loop or use prod.
+
+In fact, fortran90 has problems with any power of negative
+numbers. Try to avoid them for matlab2fmex.
+
+matlab2fmex can't change the size or type of variables, it can only
+see what is in the workspace file. Don't change data type in your *.m
+files (e.g. k=1; then later k=[1:10];). Similarly, avoid conditionally
+creating variables in braches. If you do, be sure to save these
+variables in the workspace file or the translated *.f file won't
+declare that variable.
+
+In changing matlab's * to a fortran matrix multiply (via matmul)
+sometimes matlab2fmex guesses wrong on the order of operations. For
+example: scalar^matrix1*matrix2 might be translated mathematically as:
+scalar^(matmul(matrix1*matrix2))
+Therefore, when in doubt, add some parenthese to make matters clearer:
+(scalar^matrix1)*matrix2 will be translated correctly.
+
+Avoid assigning row vectors to column vectors and vica versa. Some
+fortran90's have a problem with this.
+
+Many bugs can be avoided by making sure the saved workspace file:
+     a) has all variables saved in it (of the right size)
+     b) has each variables type (real, complex) correct
+  This can be done with matlab2fmex_save (see README).
+
+After the initial call to matlab2fmex('...'), the fortran source file can be modified like
+any other fortran file. As long as the gateway remains the same, the rest of the fortran
+can be modified to add functionality. To recompile, simply do:
+>>mex filename.f90
+
+
+
+mexoperators contents --
+
+    mexoperators is a module located near the top of the converted file that contains, as
+    needed, generic function interfaces which carry out the basic arithmatic in Fortran90
+    trying to emulate Matlab functionality. Thus when two matrices are multiplied,
+    mxmult(arg1,arg2) is called and the interface is inserted into
+    mexoperators. The operators interfaces in mexoperators are: 
+    Operator -- generic interface -- Matlab function
+    .'       -- mxtr              -- transpose
+    '        -- mxctr             -- conjugate transpose
+    All of these attempt to mimic Matlab functionality with respect to
+    matrix size (scalar or 2-D).
+    Additionally, there are a few other supporting interfaces descibed
+    below.
+
+    mxs	-- Make scalar.
+    mxs accepts any scalar or array and returns a scalar value. This
+    is used when, for example, a conversion is needed between a 1x1
+    2-D array and a scalar value in Fortran. If you are getting size
+    mismatch errors during compilation of the coverted file, mxs and
+    mxa can help go back and forth between scalars and 2-D arrays of
+    size 1. 
+    Examples:
+    a is scalar, b is 1x1 2-D array.
+    a=b                 ! invalid: size mismatch
+    a=mxs(b)            ! OK
+    b=a                 ! OK
+    b(1,1)=a            ! OK
+    b([1],[1])=a        ! invalid: size mismatch
+    b([1],[1])=mxa(a)   ! OK
+    Remember, the arithmetic mexoperators listed above return arrays
+    unless all inputs are scalar. Use mxa and mxs to resolve size
+    mismatch compiler errors.
+
+    mxi -- make subscript
+    mxi accepts both scalar and arrays and converts these to 1-D
+    integer arrays. This is useful because Fortran expects 1-D integer
+    arrays as subscripts. want_ss=1 should solve most indexing
+    problems at the expense of some speed. If you have just a few
+    spots which need subscript help, but want to keep the mxi calls
+    down, you can insert these by hand and reMEX.
+    Example:
+    a is 3x3 array, b is 1x3 array, and c is 1x3 array
+    a(b,[1])=c           ! invalid, 2-D subscript as index
+    a(mxi(b),[1])= c     ! OK
+    If b is an integer array, then
+    a([b],[1])= c        ! OK
+
+

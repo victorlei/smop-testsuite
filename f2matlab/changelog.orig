@@ -1,0 +1,35 @@
+01/01/02 - Initial conception
+05/20/02 - Initial release.
+05/22/02 - Initial release had broken links. Fixed
+05/22/02 - Now allows multiple program units in one file
+05/23/02 - Release 0.2.
+05/25/02 - Fixed many bugs
+06/04/02 - Release 0.4
+07/07/02 - Again, some bug fixing, added a feature that zeros out zero
+           indexed arrays (set want_ze =1 in on line 8 of f2matlab.m)
+07/07/02 - Released 0.55
+06/11/04 - various bug fixes
+06/14/04 - now converts common blocks to globals
+06/15/04 - release 0.75
+06/21/04 - made things a bit faster
+06/28/04 - added int() to line 841 of example mmtu12.for
+07/10/04 - added brackets on : subscripts
+           added support for -# indexed subscripts
+	   improved zeroing variables
+	   added hints file
+08/02/04 - release 0.80
+11/30/04 - fixed version incompatibility in updatefunstr_f.m
+12/07/04 - support added for some common read/write/print statements types
+12/14/04 - added support for many implied do loops
+01/20/05 - some bug fixes
+02/08/05 - added try catch's
+02/24/05 - added some support for fortran string comparisons, date_and_time
+02/25/05 - added some support for functions as arguments
+03/07/05 - can now handle statement functions
+           faster for files with many subroutines
+03/09/05 - put fix() around declared integers
+03/14/05 - some fixes, loop var now correct on exit from loop
+03/21/05 - rewrote some parts to deal with var decs better
+	   save (or declared with a value) vars in fortran are now
+	   persistent
+03/28/05 - released 1.25

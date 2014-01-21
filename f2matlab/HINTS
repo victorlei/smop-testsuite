@@ -1,0 +1,28 @@
+Some hints for using f2matlab.
+
+
+
+Put all of your fortran source (modules, subroutines, functions, and the main program) all in
+one text file, then use f2matlab on that. f2matlab can figure out include files on its own,
+though.
+
+
+If there is an error, funstr{i} usually contains the line that f2matlab had a problem on.
+
+
+One source of bugs is the difference in the way fortran and Matlab perform loops. 
+On exit from
+   do i=1,5
+   end do
+i=6 in fortran, however i=5 in a similar Matlab loop.
+
+    
+f2matlab works best on f90 sources written in a "standard" way. One way to get closer to this
+standard is to use 
+plusFORT's spag on your program before trying f2matlab. 
+http://www.polyhedron.com/pf/pflinux.html
+
+
+fortran doesn't distinguish between column and row vectors, and this may cause problems with
+the translation as there may be a size mismatch in matlab with some mathematical
+operations.

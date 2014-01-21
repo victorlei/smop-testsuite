@@ -1,0 +1,87 @@
+01/01/01 - Initial conception
+06/11/01 - Initial release.
+	 - made scalar convert option (want_ss=-1)
+06/23/01 - fixed bug of elipses in disp statements.
+07/02/01 - Fixed some bugs relating to bracket checking. Also implemented
+	multi-output function. This does not support subscripts on the
+	output variables, however.
+07/02/01 - Released 0.2.
+07/20/01 - Fixed number reading bug concerning exponents
+08/14/01 - Added repmat, reshape, and linspace, fixed min bug
+08/20/01 - Revised function substitution procedure to construct only those
+	generic interfaces called for. Also fixed memory leak due to
+	pointer function results by using temporary pointers in the main
+	prg.
+08/27/01 - Fixed the data type in fillc in matlabcallback to be type
+	complex
+08/27/01 - Added some safeguard for calling translated functions.
+08/27/01 - Allowed converter parameters to be passed as function
+	arguments.
+08/29/01 - Changed tick mark feedback. Now executes faster.
+08/29/01 - Removed brackets from 1x1 expressions.
+08/30/01 - Updated mxs assignment criteria.
+08/30/01 - Rewrote math operator decisions.
+09/05/01 - Added multiple function capability.
+09/07/01 - Released 0.5
+09/11/01 - WTC terrorist attacks
+09/13/01 - Can now have arbitrary colon lists in brackets 
+	(e.g. [.1:.025:.9])
+09/18/01 - Fixed bug converting while loops
+09/19/01 - Added diag to converted functions
+09/20/01 - Added svd, norm to converted functions
+09/20/01 - Speeded up mxmult by using matmul directly
+10/01/01 - Made improvements to scalar assignments.
+10/01/01 - Fixed bug regarding detecting scalars
+10/01/01 - Fixed problem converting multiple functions
+10/01/01 - Added flag to disallow integers for local vars
+10/08/01 - Released 0.51
+10/18/01 - increased speed by changing updatefunstr
+10/29/01 - Added a few functions -- bessels, airy, gamma, gammaln
+11/07/01 - Fixed bug in making subscripts
+11/07/01 - Can now call without explicitly specifying output var specs
+11/07/01 - Eliminated [] flags requirement
+11/07/01 - Fixed bug in multiple output mlcalls
+11/09/01 - Added library call support for subroutines
+11/09/01 - Fixed subroutines not reporting interfaces to main
+11/11/01 - Made svd and eig double precision
+11/13/01 - added detection of dos or unix os for system calls 
+11/13/01 - Released 0.6
+11/19/01 - Fixed bug with .^ translation
+11/27/01 - Fixed bug involving CR on some Windows machines (RJHP)
+12/10/01 - Added matlab2fmex_save to help with saving the workspace
+01/21/02 - Fixed bugs dealing with multi-output matlab function calls
+01/22/02 - Fixed log10 and log2 to handle complex numbers
+01/28/02 - Fixed a bug which sized local variables incorrectly
+01/28/02 - Corrected some incorrect type assignments
+01/30/02 - Sped things up a bit by not traversing redundant loops
+02/08/02 - Made colon expressions in subscripts more reliable
+02/09/02 - Added Matlab's switch functionality
+03/10/02 - Fixed dynamic output and local variable sizing
+04/20/02 - Fixed a bug which required at least 1 local var
+04/24/02 - Allowed complex variables to be function inputs
+04/25/02 - Released 0.7
+04/29/02 - Fixed a bug not requiring integers in some subscripts
+07/11/02 - There has been ongoing development, though this file has not
+        been updated. The major change has been in the interface. Explicit
+	fortran pointers are no longer used, but Matlab library routines
+	line mxCopyPtrToReal8 are used instead. This makes matlab2fmex
+	available to a much broader range of compilers.
+07/11/02 - Several bugs relating to var sizes in subroutines fixed.
+07/11/02 - Released 0.8
+07/20/02 - Added recursive subroutine/function capability
+07/24/02 - Added support for fliplr, flipud, nnz
+07/29/02 - Fixed a bug inserting extra commas for some [ ] assignments
+07/30/02 - Added support for median and mean
+08/03/02 - Improved trig interfaces (no longer uses slatec library)
+08/03/02 - Much improvement for logical and other indexing of variables
+08/04/02 - added better find functionality
+08/05/02 - Released 0.85
+09/24/02 - Again, ongoing development. Rewrote many core conversions to
+        improve speed by utilizinf fortran intrinsics and minimizing
+	allocatable arrays. Released 1.00.
+01/29/04 - Fixed potential bug in detecting alpha machines
+01/30/04 - Removed option for removing extra files after compiling
+02/01/04 - Switched to f90 free format file type
+02/01/04 - relocated helper mex modules to beginning of converted file
+09/22/04 - modified so no longer have to pass array sizes
+09/22/04 - mxCreateull -> mxCreateDoubleMatrix
