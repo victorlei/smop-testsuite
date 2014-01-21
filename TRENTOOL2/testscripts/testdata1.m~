@@ -1,0 +1,33 @@
+cd('/data/projects/TransferEntropy/AR_simulations/SimData/Reference4TRENTOOL2')
+
+origfiles= dir('*raw_data.mat');
+prepfiles= dir('*TE_output.mat');
+
+f = 1;
+
+for ii = 1
+    load(origfiles(ii).name)
+    load(prepfiles(ii).name)
+    
+    cfg = TEresult.TEprepare.cfg;
+    cfg.caotau = cfg.tau;
+    rmfield(cfg, 'tau');
+    
+    dataprep = TEprepare(cfg,data);
+    
+    clear cfg;
+    cfg = TEresult.cfg;
+    
+    
+    d = strfind(cfg.fileidout,'TRENTOOL2/');
+    newstring = strrep(cfg.fileidout, cfg.fileidout(1:d+9), [cfg.fileidout(1:74),'TRENTOOL20_tested/'],
+    
+    cfg.fileidout = [cfg.fileidout,'_TRENTOOL2.0'];
+    cfg.optdimusage
+    
+    TEsurrogatestats(cfg,dataprep);
+    
+    
+end
+
+    

@@ -1,0 +1,25 @@
+nruns=20;
+% create the data
+% TE_multi(1,0,0,'sdir','Reference4TRENTOOL2','cpl',{'lin'},'nruns',nruns,'nx',[0.1],'saveraw','yes','newcalc')
+
+% collect the data into a structure
+for run=1:nruns
+    filename=strcat('/data/projects/TransferEntropy/AR_simulations/SimData/Reference4TRENTOOL2'...
+        ,num2str(run));
+    load(filename)
+    data{run}=data; clear data;
+end
+
+% build the new super-dataset for testing
+ Data=[];
+ 
+ for currenttrial=1:size(data{1}.trial,1)
+    for run=1:nruns
+    Data.trial{currenttrial}=[Data.trial{currenttrial}; data{run}.trial{currenttrial}]
+    end
+ end
+
+  for run=1:20
+      Data.label{2*run-1}=strcat(data{run}.label{1})
+      Data.label{2*run}=strcat(data{run}.label{2})
+  end

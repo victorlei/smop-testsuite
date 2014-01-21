@@ -1,0 +1,22 @@
+
+t1=randn(1,3000);
+t2=randn(1,3000);
+
+u = 20;
+tau = 5;
+dim = 10;
+kth = 4;
+ThielerT = 4;
+
+tic
+[te1,mi1] = TECvalues(t1,t2,dim,tau,u,kth,TheilerT);
+toc
+
+
+tic
+[te2,mi2] = TECvalues_test(t1,t2,dim,tau,u,kth,TheilerT);
+toc
+
+
+tdiff = te1-te2;
+mdiff = mi1-me2;

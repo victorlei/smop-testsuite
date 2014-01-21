@@ -1,0 +1,47 @@
+function TGA=TEGraphTime_analyze(cfg,data)
+
+% analyzes and compacts the output of TEGraphTime_calculate
+
+NumOfUs=length(data);
+NumSgnCmbs=size(data{1}.sgncmb,1);
+
+% collect data into an efficient structure
+TGA=data{1}; % dummy copy
+TGA.TEpermvaluesTmp=nan([size(data{1}.TEpermvalues) NumOfUs]);
+TGA.TEpermvalues=nan(size(data{1}.TEpermvalues));
+
+TGA.sgncmb=data{1}.sgncmb;
+% ... copy other stuff
+% ...
+% remove misleading old information
+%TGA=rmfield(TGA.cfg,'predicttime_u');
+
+TEDiffMat=[]; % called TEDiffmat, because it contains TE values in the form of differences against surrogates
+uvec=[];
+for uu=1:NumOfUs
+   TGA.TEpermvaluesTmp(:,:,uu)=data{uu}.TEpermvalues;
+   uvec(uu)=data{uu}.cfg.predicttime_u;
+   %TEDiffMat=[TEDiffMat data{uu}.TEpermvalues(:,4)]; TODO correct this
+end
+
+
+for cc=1:NumSgnCmbs
+    % if cfg.select_opt_u='min_p'
+    minp(cc)=min(squeeze(TGA.TEpermvaluesTmp(cc,1,:)));
+    IdxMinPTmp=find(TGA.TEpermvaluesTmp(cc,1,:)==minp(cc));
+    IdxMinP(cc)=IdxMinPTmp(1); % was IdxMinPTmp(end) before, but see SFN2011 poster
+    TGA.TEpermvalues(cc,:)=TGA.TEpermvaluesTmp(cc,:,IdxMinP(cc));
+    OptUTmp(cc)=data{IdxMinP(cc)}.cfg.predicttime_u;
+    % elseif cfg.select_opt_u='max_TEdiff'
+    
+    
+    %end
+end
+% insert the vector of u-value where minimum p was found, remove volume
+% conduction (volume conduction will result in  0 ms).
+
+VolCondIndicator=(ones(size(squeeze(TGA.TEpermvalues(:,5))))-squeeze(TGA.TEpermvalues(:,5))); % 0 for volume conduction, 1 for OK
+
+TGA.TEpermvalues(:,1,6)=(OptUTmp)'.*VolCondIndicator;
+TGA.uvec=uvec;
+TGA.TEDiffMat=TEDiffMat;
